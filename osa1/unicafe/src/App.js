@@ -22,7 +22,7 @@ const StatisticLine = (props) => {
 
 const Statistics = (props) => {
   const all = props.good + props.neutral + props.bad
-  const avg = (props.good * 2 + props.bad * -1) / all
+  const avg = (props.good + props.bad * -1) / all
   const posi = String(props.good / all * 100).concat("%")
   
   if (all === 0) {

@@ -26,7 +26,6 @@ const App = () => {
   const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState(Array(anecdotes.length).fill(0))
 
-  console.log(points)
   const anecdoteOnClick = () => {
     setSelected(Math.floor(Math.random() * anecdotes.length))
   }
@@ -43,6 +42,7 @@ const App = () => {
     <div>
       <h1>Anecdote of the day</h1>
       {anecdotes[selected]}
+      <div>has {points[selected]} votes</div>
       <div>
         <Button onClick={voteOnClick} text={"vote"} />
         <Button onClick={anecdoteOnClick} text={"next anecdote"} />
