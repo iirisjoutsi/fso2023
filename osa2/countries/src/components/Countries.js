@@ -1,7 +1,6 @@
 import Country from "./Country"
 
 const Countries = (props) => {
-  console.log(props)
 
   if (props.countries.length > 10) {
     return (

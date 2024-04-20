@@ -8,7 +8,7 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [countriesToShow, setCountriesToShow] = useState(null)
   
-  const countriesUrl = "https://restcountries.com/v3.1/all"
+  const countriesUrl = "https://studies.cs.helsinki.fi/restcountries/api/all"
   
   const getCountries = () => {
     const request = axios.get(countriesUrl)

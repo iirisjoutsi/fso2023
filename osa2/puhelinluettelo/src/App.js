@@ -80,7 +80,7 @@ const App = () => {
   }
 
   const handleDelete = (person) => {
-    if (window.confirm(`Do you want to delete this person? ${person.name}`)) {
+    if (window.confirm(`Do you want to delete ${person.name}?`)) {
       personService
         .deleteObject(person.id).then( () => {
           setPersons(persons.filter(n => n.id !== person.id))
