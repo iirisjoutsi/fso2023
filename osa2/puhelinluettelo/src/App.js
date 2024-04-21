@@ -11,7 +11,6 @@ const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [showAll, setShowAll] = useState(true)
   const [newFilter, setNewFilter] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState(false)
@@ -25,8 +24,6 @@ const App = () => {
     
   }, [])
 
-  const namesToShow = showAll ? persons : persons.filter(p => p.name.toLowerCase().includes(newFilter))
-
   const handlePersonsChange = (event) => {
     setNewName(event.target.value)
   }
@@ -36,7 +33,6 @@ const App = () => {
   }
   
   const handleFilterChange = (event) => {
-    setShowAll(false)
     setNewFilter(event.target.value)
   }
 
@@ -60,7 +56,7 @@ const App = () => {
             }, 5000)
           })
           .catch(error => {
-            setMessage(`Information of ${personObject.name} has already been removed from server`)
+            setMessage(error.response.data.error)
             setError(true)
             setTimeout(() => {
               setMessage('')
@@ -90,7 +86,7 @@ const App = () => {
           }, 5000)
         })
         .catch(error => {
-          setMessage(`Information of ${person.name} has already been removed from server`)
+          setMessage(`The person ${person.name} was already deleted from the server.`)
           setError(true)
           setTimeout(() => {
             setMessage('')
@@ -104,12 +100,12 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={message} error={error} />
-      <Filter handleFilterChange={handleFilterChange} />
+      <Filter filter={newFilter} handleFilterChange={handleFilterChange} />
 
       <h3>add a new</h3>
       <PersonsForm handleSubmit={handleSubmit} handlePersonsChange={handlePersonsChange} handleNumberChange={handleNumberChange} />
       <h2>Numbers</h2>
-      <Persons persons={namesToShow} handleDelete={handleDelete} />
+      <Persons persons={persons} handleDelete={handleDelete} filter={newFilter} />
     </div>
   )
 
