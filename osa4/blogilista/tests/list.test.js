@@ -71,6 +71,11 @@ const famousAuthor = {
   blogs: 3
 }
 
+const likedAuthor = {
+  author: "Robert C. Martin",
+  likes: 24
+}
+
 // DUMMY
 test('dummy returns one', () => {
   const blogs = []
@@ -118,10 +123,19 @@ describe('favourite blog', () => {
 })
 
 // MOST BLOGS
-describe('favourite blog', () => {
+describe('author with most blogs', () => {
   
   test('when rob has three blogs', () => {
     const result = listHelper.mostBlogs(listWithManyBlogs)
     assert.deepStrictEqual(result, famousAuthor)
+  })
+})
+
+// MOST LIKES
+describe('author with most likes', () => {
+  
+  test('when rob has 24 likes', () => {
+    const result = listHelper.mostLikes(listWithManyBlogs)
+    assert.deepStrictEqual(result, likedAuthor)
   })
 })
