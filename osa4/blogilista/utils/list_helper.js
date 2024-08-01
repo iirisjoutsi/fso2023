@@ -13,18 +13,23 @@ const favoriteBlog = (blogs) => {
 }
 
 const mostBlogs = (blogs) => {
+  if (blogs.length === 0) {
+    return { author: undefined, blogs: 0 };  
+  }
+
   const groupByAuthor = _.groupBy(blogs, 'author');
-    
   const mostBlogsAuthor = _.maxBy(Object.keys(groupByAuthor), author => groupByAuthor[author].length);
     
   return { author: mostBlogsAuthor, blogs: groupByAuthor[mostBlogsAuthor].length };
 }
 
 const mostLikes = (blogs) => {
+  if (blogs.length === 0) {
+    return { author: undefined, likes: 0 };  
+  }
+
   const groupByAuthor = _.groupBy(blogs, 'author')
-
   const likesByAuthor = _.mapValues(groupByAuthor, blog => _.sumBy(blog, "likes"))
-
   const mostLikesAuthor = _.maxBy(Object.keys(likesByAuthor), author => likesByAuthor[author])
 
   return { author: mostLikesAuthor,  likes: likesByAuthor[mostLikesAuthor] }
