@@ -1,5 +1,6 @@
 const config = require('./utils/config')
 const express = require('express')
+require('express-async-errors')
 const app = express()
 const cors = require('cors')
 const blogsRouter = require('./controllers/blogs')
@@ -24,9 +25,6 @@ app.use(express.json())
 app.use(middleware.requestLogger)
 
 app.use('/api/blogs', blogsRouter)
-
-const password = process.argv[2]
-const mongoUrl = `mongodb+srv://iirisjoutsi:${password}@fullstack.ipzifem.mongodb.net/?retryWrites=true&w=majority`
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
