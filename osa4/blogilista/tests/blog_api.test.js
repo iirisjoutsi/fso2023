@@ -1,4 +1,4 @@
-const { test, after, beforeEach, describe } = require('node:test')
+const { test, after, beforeEach, before, describe } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const Blog = require('../models/blog')
@@ -8,23 +8,56 @@ const helper = require('./test_helper')
 
 const api = supertest(app)
 
+let token = ''
+let id = ''
+
+before(async () => {
+
+  const user = {
+    username: 'logged',
+    name: 'Logged user',
+    password: 'logged',
+  }
+
+  const credentials = {
+    username: user.username,
+    password: user.password,
+  }
+
+  const result = await api.post('/api/users').send(user)
+  id = result.body.id
+    
+  const res = await api.post('/api/login').send(credentials)
+  token = res.body.token
+
+})
+
 describe('when there is initially some blogs saved', () => {
+  
 
   beforeEach(async () => {
+    const mappedBlogs = helper.initialBlogs.map(b => {
+      return {
+        ...b,
+        user: id
+      }
+    })
+
     await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialBlogs)
+    await Blog.insertMany(mappedBlogs)
   })
 
   // BLOGS ARE JSON
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .expect('Content-Type', /application\/json/)
   })
 
   // BLOGS INITIALISED CORRECTLY
-  test.only('there are two blogs', async () => {
+  test('there are two blogs', async () => {
     const blogs = await helper.blogsInDb()
     
     assert.strictEqual(blogs.length, helper.initialBlogs.length)
@@ -54,6 +87,7 @@ describe('adding a blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -66,6 +100,22 @@ describe('adding a blog', () => {
     assert(title.includes('async/await simplifies making async calls'))
   })
 
+  // ADDING A BLOG WITHOUT TOKEN
+  test('adding a blog without a token fails ', async () => {
+    const newBlog = {
+      author: 'Author C',
+      title: 'async/await simplifies making async calls',
+      url: 'cccc',
+      likes: 10,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+  })
+
   // ADDING A BLOG WITH NO LIKES
   test('adding a blog without likes results in likes being 0', async () => {
     const newBlog = {
@@ -76,6 +126,7 @@ describe('adding a blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
 
@@ -84,7 +135,7 @@ describe('adding a blog', () => {
     assert.strictEqual(blogs[blogs.length - 1].likes, 0)
   })
 
-  // ADDING A TEST WITH NO TITLE
+  // ADDING A BLOG WITH NO TITLE
   test('a blog with no author returns 400', async () => {
     const newBlog = {
       author: 'Author E',
@@ -94,6 +145,7 @@ describe('adding a blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(400)
   })
@@ -108,6 +160,7 @@ describe('adding a blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(400)
   })
@@ -121,6 +174,7 @@ describe('deletion of a blog', () => {
     
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(204)
     
     const blogsAtEnd = await helper.blogsInDb()
@@ -147,6 +201,7 @@ describe('updating a blog', () => {
 
     await api
       .put(`/api/blogs/${blogToUpdate.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(200)
     
     const blogsAtEnd = await helper.blogsInDb()
