@@ -24,7 +24,7 @@ describe('when there is initially some blogs saved', () => {
   })
 
   // BLOGS INITIALISED CORRECTLY
-  test('there are two blogs', async () => {
+  test.only('there are two blogs', async () => {
     const blogs = await helper.blogsInDb()
     
     assert.strictEqual(blogs.length, helper.initialBlogs.length)
